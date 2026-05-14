@@ -1,0 +1,79 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: mundial_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - mundial_network
+    depends_on:
+      - mysql
+      - redis
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: mundial_nginx
+    restart: unless-stopped
+    ports:
+      - "8002:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - mundial_network
+    depends_on:
+      - app
+
+  mysql:
+    image: mysql:8.4
+    container_name: mundial_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: mundial
+      MYSQL_ROOT_PASSWORD: mundial
+      MYSQL_USER: mundial
+      MYSQL_PASSWORD: mundial
+    ports:
+      - "3307:3306"
+    volumes:
+      - mundial_mysql_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - mundial_network
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: mundial_redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - mundial_redis_data:/data
+    networks:
+      - mundial_network
+    command: redis-server --appendonly yes
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mundial_mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - mundial_network
+
+networks:
+  mundial_network:
+    driver: bridge
+
+volumes:
+  mundial_mysql_data:
+    driver: local
+  mundial_redis_data:
+    driver: local
