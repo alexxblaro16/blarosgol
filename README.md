@@ -184,17 +184,3 @@ mundial-fifa-2026/
 └── docker-compose.yml           # PHP-FPM, Nginx, MySQL, Redis, MailHog
 ```
 
----
-
-## Para la mini-prueba del 18/05
-
-Conceptos del proyecto que pueden caer en el examen:
-
-- **Sanctum vs Passport** — Sanctum usa tabla `personal_access_tokens` + middleware `auth:sanctum`. Tokens en cabecera `Authorization: Bearer ...`.
-- **Policies** — registradas en `AppServiceProvider::boot()` con `Gate::policy(Model::class, Policy::class)`. Se invocan con `$user->can('verb', $modelo)`.
-- **Observers** — `Model::observe(Observer::class)` en boot del provider. `saved()` se dispara después de create y update.
-- **FormRequest::failedValidation** — sobreescrito para devolver el formato JSON unificado en vez del 302 redirect por defecto.
-- **`statefulApi()` en `bootstrap/app.php`** — permite que el front Blade use sesión + el cliente API use token (Sanctum acepta ambos).
-- **`saveQuietly()`** — guarda sin disparar eventos (evita bucles infinitos en observers).
-- **Soft delete vs delete** — aquí usamos delete directo en `CommunityMember` para que el creador pueda re-aceptar más tarde sin filas zombi.
-- **`UNIQUE` compuesto** — `UNIQUE(creator_id, name)` en `communities` para que un mismo usuario no repita nombre, pero diferentes usuarios sí puedan.

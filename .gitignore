@@ -30,7 +30,13 @@ Thumbs.db
 /storage/logs/*.log
 !.gitignore
 
-# Scripts auxiliares internos
-/scripts-internos/
+# Carpetas internas (notas personales, scripts auxiliares, apuntes de estudio)
 /notas/
+/notas-personales/
+/apuntes/
+/apuntes-personales/
 /docs-internos/
+/scripts-internos/
+/tmp/
+/_tmp/
+/.scratch/
